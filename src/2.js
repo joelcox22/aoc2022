@@ -35,7 +35,7 @@ function choose (p1, target) {
 }
 
 util.solve((input) => {
-  const data = input.trim().split('\n').map(line => line.split(' ').map(x => transform[x]))
+  const data = input.split('\n').map(line => line.split(' ').map(x => transform[x]))
 
   const winners = data.map(whoWins)
   const scores = winners.map(calculateScore)

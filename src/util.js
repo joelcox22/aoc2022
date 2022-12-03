@@ -8,21 +8,33 @@ export const sort = {
   descending: (a, b) => a - b
 }
 
-export function solve (solver, attemptReal = true) {
+export async function solve (solver, attemptReal = true) {
+  const start = performance.now()
   const problem = process.argv[1].match(/(\d+)\.js/)[1]
   const inputs = ['example']
   if (attemptReal) inputs.push('real')
-  const results = inputs.map((input) => {
+  const results = await Promise.all(inputs.map(async (input) => {
     const inputPath = path.join('inputs', input, problem)
-    let result
+    let content
     if (fs.existsSync(inputPath)) {
-      result = solver(fs.readFileSync(inputPath, 'utf8'))
+      content = fs.readFileSync(inputPath, 'utf-8')
+    } else {
+      if (input === 'real') {
+        content = await (await fetch(`https://adventofcode.com/2022/day/${problem}/input`, {
+          headers: {
+            Cookie: fs.readFileSync('cookie.txt', 'utf-8')
+          }
+        })).text()
+        fs.writeFileSync(inputPath, content)
+      }
     }
+    let result = solver(content.trim())
     if (!Array.isArray(result)) {
       result = [result]
     }
     return result
-  })
+  }))
+  const end = performance.now()
   console.table({
     'Part 1': {
       Example: results[0][0],
@@ -33,4 +45,5 @@ export function solve (solver, attemptReal = true) {
       Solution: results[1]?.[1]
     }
   })
+  console.log((end - start).toFixed(2) + 'ms')
 }
