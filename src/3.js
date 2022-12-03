@@ -17,5 +17,5 @@ util.solve((input) => {
   const common2 = chunks2.map(uniqueItem)
   const values2 = common2.map(itemPriority)
 
-  return [Math.sum(values), Math.sum(values2)]
+  return [_.sum(values), _.sum(values2)]
 })

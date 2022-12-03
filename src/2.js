@@ -1,4 +1,5 @@
 import * as util from './util.js'
+import _ from 'lodash'
 
 const transform = {
   A: 'rock',
@@ -44,5 +45,5 @@ util.solve((input) => {
   const winners2 = plan.map(whoWins)
   const scores2 = winners2.map(calculateScore)
 
-  return [Math.sum(scores), Math.sum(scores2)]
+  return [_.sum(scores), _.sum(scores2)]
 })

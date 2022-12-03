@@ -1,8 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-Math.sum = (values) => values.reduce((a, b) => a + b, 0) // why isn't Math.sum a standard thing in JS Math lib? :(
-
 export const sort = {
   ascending: (a, b) => b - a,
   descending: (a, b) => a - b
@@ -17,16 +15,26 @@ export async function solve (solver, attemptReal = true) {
     const inputPath = path.join('inputs', input, problem)
     let content
     if (fs.existsSync(inputPath)) {
+      // read input from file if it exists
       content = fs.readFileSync(inputPath, 'utf-8')
     } else {
+      // fetch it from the website directly if we don't have it yet
+      // (saves me some time copy+pasting it manually 🤣)
       if (input === 'real') {
-        content = await (await fetch(`https://adventofcode.com/2022/day/${problem}/input`, {
-          headers: {
-            Cookie: fs.readFileSync('cookie.txt', 'utf-8')
-          }
-        })).text()
-        fs.writeFileSync(inputPath, content)
+        if (fs.existsSync('cookie.txt')) {
+          content = await (await fetch(`https://adventofcode.com/2022/day/${problem}/input`, {
+            headers: {
+              Cookie: fs.readFileSync('cookie.txt', 'utf-8')
+            }
+          })).text()
+        } else {
+          throw new Error('grab your cookie from the website, save it as `cookie.txt` in the repo root, then try again')
+        }
+      } else {
+        content = (await (await fetch(`https://adventofcode.com/2022/day/${problem}`)).text()).match(/<pre><code>(.*?)<\/code><\/pre>/s)[1]
       }
+      fs.mkdirSync(`inputs/${input}`, { recursive: true })
+      fs.writeFileSync(inputPath, content)
     }
     let result = solver(content.trim())
     if (!Array.isArray(result)) {
