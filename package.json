@@ -2,18 +2,27 @@
   "name": "aoc2022",
   "version": "1.0.0",
   "description": "",
-  "main": "1.js",
-  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
+    "day": "bun src/index.ts",
+    "watch": "nodemon --exec bun src/index.ts",
+    "timeline": "bun src/timeline.ts",
+    "timeline:watch": "nodemon --exec bun src/timeline.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "standard": "^17.0.0"
+    "@types/lodash": "^4.14.191",
+    "bun-types": "^0.2.2",
+    "nodemon": "^2.0.20",
+    "ts-standard": "^12.0.1",
+    "typescript": "^4.9.3"
   },
   "dependencies": {
+    "console-table-printer": "^2.11.1",
+    "date-fns": "^2.29.3",
     "lodash": "^4.17.21"
   }
 }

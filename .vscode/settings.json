@@ -3,4 +3,5 @@
   "editor.insertSpaces": true,
   "editor.formatOnSave": false,
   "standard.autoFixOnSave": true,
+  "standard.engine":"ts-standard"
 }
