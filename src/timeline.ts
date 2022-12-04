@@ -16,7 +16,7 @@ ${days.map(day => `
 \`\`\`mermaid
 gantt
 title Day ${day}
-dateFormat  YYYY-MM-DD HH:mm
+dateFormat  YYYY-MM-DD HH:mm:ss
 axisFormat %H:%M
 ${Object.values(data.members)
   .filter((member) => '1' in (member.completion_day_level[day] ?? {}))
@@ -32,9 +32,9 @@ ${Object.values(data.members)
       const end = getStarDate('2')
       const section = [`section ${member.name ?? `Anonymous ${member.id}`}`]
        if ((start != null) && (end != null)) {
-        section.push(`${format(start, 'h.mma')} - ${format(end, 'h.mma')} :${format(start, 'yyyy-MM-dd HH:mm')}, ${format(end, 'yyyy-MM-dd HH:mm')}`)
+        section.push(`${format(start, 'h.mma')} - ${format(end, 'h.mma')} :${format(start, 'yyyy-MM-dd HH:mm:ss')}, ${format(end, 'yyyy-MM-dd HH:mm:ss')}`)
        } else if (start != null) {
-        section.push(`${format(start, 'h.mma')} :milestone, ${format(start, 'yyyy-MM-dd HH:mm')}`)
+        section.push(`${format(start, 'h.mma')} :milestone, ${format(start, 'yyyy-MM-dd HH:mm:ss')}`)
        }
       return section.join('\n')
     }).join('\n')}
