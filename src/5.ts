@@ -1,7 +1,5 @@
 import * as util from './util'
 
-util.flags.TRIM = false
-
 export const solve: util.Solver = (input) => {
   const data = input.split('\n\n')
   const stacks: string[][] = []

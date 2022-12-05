@@ -40,7 +40,7 @@ function choose (p1: Option, target: Option): Option {
 }
 
 export const solve: util.Solver = (input) => {
-  const data = input.split('\n').map(line => line.split(' ').map(x => transform[x as Input])) as Option[][]
+  const data = input.trim().split('\n').map(line => line.split(' ').map(x => transform[x as Input])) as Option[][]
 
   const winners = data.map(whoWins)
   const scores = winners.map(calculateScore)

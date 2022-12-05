@@ -8,11 +8,10 @@ export const sort = {
 }
 
 export const flags = {
-  SKIP_REAL: false,
-  TRIM: true
+  SKIP_REAL: false
 }
 
-export type Solver = (input: string) => Array<number | string>
+export type Solver = (input: string) => Array<string|number>
 
 export async function solve (problem: string, solver: Solver): Promise<void> {
   const start = performance.now()
@@ -50,7 +49,7 @@ export async function solve (problem: string, solver: Solver): Promise<void> {
       fs.mkdirSync(`inputs/${input}`, { recursive: true })
       fs.writeFileSync(inputPath, content)
     }
-    let result = solver(flags.TRIM ? content.trim() : content)
+    let result = solver(content)
     if (!Array.isArray(result)) {
       result = [result]
     }
