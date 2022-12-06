@@ -11,7 +11,7 @@ export const flags = {
   SKIP_REAL: false
 }
 
-export type Solver = (input: string) => Array<string|number>
+export type Solver = (input: string) => Array<string | number>
 
 export async function solve (problem: string, solver: Solver): Promise<void> {
   const start = performance.now()
