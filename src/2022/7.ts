@@ -1,5 +1,7 @@
 import { produce } from 'immer'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [95437, 24933642]
 
 interface State {
   cwd: string
@@ -11,7 +13,7 @@ interface Step {
   output: string[]
 }
 
-const exec = (state: State, step: Step): State => produce(state, (draft) => {
+const exec = (state: State, step: Step): State => produce(state, (draft: State) => {
   const [command, ...args] = step.command.split(' ')
   switch (command) {
     case 'cd':

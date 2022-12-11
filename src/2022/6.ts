@@ -1,4 +1,6 @@
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [7, 19]
 
 function find (input: string, l: number): number {
   for (let i = l; i < input.length; i++) {

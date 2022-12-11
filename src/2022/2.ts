@@ -1,5 +1,7 @@
 import _ from 'lodash'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [15, 12]
 
 type Input = 'A' | 'B' | 'C' | 'X' | 'Y' | 'Z'
 type Option = 'rock' | 'paper' | 'scissors'
@@ -21,11 +23,11 @@ const values = {
 }
 
 function whoWins ([p1, p2]: Option[]): [Outcome, Option] {
-  let result: Outcome
+  let result: Outcome = 'draw'
+  if (p1 === p2) return [result, p2]
   if (p1 === 'rock') result = p2 === 'scissors' ? 'player1' : 'player2'
   else if (p1 === 'paper') result = p2 === 'rock' ? 'player1' : 'player2'
   else if (p1 === 'scissors') result = p2 === 'paper' ? 'player1' : 'player2'
-  else result = 'draw'
   return [result, p2]
 }
 
@@ -43,11 +45,14 @@ export const solve: util.Solver = (input) => {
   const data = input.trim().split('\n').map(line => line.split(' ').map(x => transform[x as Input])) as Option[][]
 
   const winners = data.map(whoWins)
+  console.log(winners)
   const scores = winners.map(calculateScore)
 
   const plan = data.map(([p1, p2]) => [p1, choose(p1, p2)])
   const winners2 = plan.map(whoWins)
   const scores2 = winners2.map(calculateScore)
+
+  console.log(scores)
 
   return [_.sum(scores), _.sum(scores2)]
 }

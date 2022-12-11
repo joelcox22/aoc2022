@@ -6,6 +6,7 @@
   "scripts": {
     "day": "bun src/index.ts",
     "watch": "nodemon --exec bun src/index.ts",
+    "bench": "bun src/benchmark.ts",
     "timeline": "bun src/timeline.ts",
     "timeline:watch": "nodemon --exec bun src/timeline.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +25,7 @@
     "console-table-printer": "^2.11.1",
     "date-fns": "^2.29.3",
     "immer": "^9.0.16",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "yaml": "^2.1.3"
   }
 }

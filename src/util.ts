@@ -1,24 +1,27 @@
 import * as fs from 'fs'
 import * as path from 'path'
-import { printTable } from 'console-table-printer'
+import * as chalk from 'chalk'
 
 export const sort = {
   ascending: (a: number, b: number) => b - a,
   descending: (a: number, b: number) => a - b
 }
 
-export const flags = {
-  SKIP_REAL: false
-}
-
 export type Solver = (input: string) => Array<string | number>
 
-export async function solve (problem: string, solver: Solver): Promise<void> {
+export interface Solution {
+  solve: Solver
+  expect?: Array<string | number>
+  skipReal?: boolean
+}
+
+export async function solve (year: string, problem: string, solution: Solution): Promise<number> {
   const start = performance.now()
   const inputs = ['example']
-  if (!flags.SKIP_REAL) inputs.push('real')
+  const skip = solution.skipReal ?? false
+  if (!skip) inputs.push('real')
   const results = await Promise.all(inputs.map(async (input) => {
-    const inputPath = path.join('inputs', input, problem)
+    const inputPath = path.join('inputs', year, input, problem)
     let content: string
     if (fs.existsSync(inputPath)) {
       // read input from file if it exists
@@ -28,7 +31,7 @@ export async function solve (problem: string, solver: Solver): Promise<void> {
       // (saves me some time copy+pasting it manually 🤣)
       if (input === 'real') {
         if (fs.existsSync('cookie.txt')) {
-          content = await (await fetch(`https://adventofcode.com/2022/day/${problem}/input`, {
+          content = await (await fetch(`https://adventofcode.com/${year}/day/${problem}/input`, {
             headers: {
               Cookie: fs.readFileSync('cookie.txt', 'utf-8')
             }
@@ -37,7 +40,7 @@ export async function solve (problem: string, solver: Solver): Promise<void> {
           throw new Error('grab your cookie from the website, save it as `cookie.txt` in the repo root, then try again')
         }
       } else {
-        const res = await fetch(`https://adventofcode.com/2022/day/${problem}`)
+        const res = await fetch(`https://adventofcode.com/${year}/day/${problem}`)
         const html = await res.text()
         const match = html.match(/<pre><code>(.*?)<\/code><\/pre>/s)
         if (match !== null) {
@@ -46,32 +49,63 @@ export async function solve (problem: string, solver: Solver): Promise<void> {
           throw new Error('could not find example input')
         }
       }
-      fs.mkdirSync(`inputs/${input}`, { recursive: true })
+      fs.mkdirSync(`inputs/${year}/${input}`, { recursive: true })
       fs.writeFileSync(inputPath, content)
     }
-    let result = solver(content)
+    let result = solution.solve(content)
     if (!Array.isArray(result)) {
       result = [result]
     }
     return result
   }))
-  if (flags.SKIP_REAL) {
-    results.push(['todo', 'todo'])
-  }
   const end = performance.now()
-  printTable([
-    {
-      Part: 1,
-      Example: results[0][0],
-      Solution: results[1][0]
-    },
-    {
-      Part: 2,
-      Example: results[0][1],
-      Solution: results[1][1]
+  const color = (result: Array<string | number>, index: number): string => {
+    if (solution.expect != null && typeof solution.expect[index] !== 'undefined') {
+      return (solution.expect[index] === result[index])
+        ? `${chalk.greenBright(result[index])} ${chalk.gray('correct')}`
+        : `${chalk.redBright(result[index])} ${chalk.gray(`incorrect, expected ${solution.expect[index]}`)}`
     }
-  ])
-  console.log((end - start).toFixed(2) + 'ms')
+    return result[index].toString()
+  }
+  console.log('Part 1:')
+  console.log('  Example:', color(results[0], 0))
+  if (!skip) console.log('  Solution:', chalk.bold.yellowBright(results[1][0]))
+  console.log('')
+  if (results[0].length > 1) {
+    console.log('Part 2:')
+    console.log('  Example:', color(results[0], 1))
+    if (!skip) console.log('  Solution:', chalk.bold.yellowBright(results[1][1]))
+  } else {
+    console.log('Part 2 not implemented yet - return an extra number from your solve function.')
+  }
+  console.log('completed in', (end - start).toFixed(2), 'ms')
+  if (results[0].length === 1 && solution.expect?.[0] === results[0][0]) {
+    await submit(year, problem, 1, results[1][0])
+  } else if (results[0].length === 2 && solution.expect?.[1] === results[0][1]) {
+    await submit(year, problem, 2, results[1][1])
+  }
+  const duration = (end - start)
+  return duration
+}
+
+export async function submit (year: string, day: string, part: 1 | 2, answer: string | number): Promise<void> {
+  /* wip
+  if (getApproval(`Part ${part} solution looks like it might be correct. Do you want to submit it?`)) {
+    const res = await fetch(`https://adventofcode.com/${year}/day/${day}/answer`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: fs.readFileSync('cookie.txt', 'utf-8')
+      },
+      body: `level=${part}&answer=${encodeURIComponent(answer)}`
+    })
+    const html = await res.text()
+    const response = html.match(/<main>(.*?)<\/main>/s)?.[1]
+    console.log(response)
+  } else {
+    console.log('not submitting answer')
+  }
+  */
 }
 
 export interface TimelineData {
@@ -113,4 +147,12 @@ export async function fetchTimeline (): Promise<TimelineData> {
   const data = await res.json()
   fs.writeFileSync('timeline.json', JSON.stringify(data, null, 2))
   return data as TimelineData
+}
+
+export function getApproval (message: string): boolean {
+  console.log(message, 'y/n')
+  const buffer = Buffer.alloc(1)
+  fs.readSync(0, buffer, 0, 1, null)
+  const input = buffer.toString('utf-8')
+  return input === 'y'
 }

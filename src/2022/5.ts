@@ -1,4 +1,6 @@
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = ['CMZ', 'MCD']
 
 export const solve: util.Solver = (input) => {
   const data = input.split('\n\n')

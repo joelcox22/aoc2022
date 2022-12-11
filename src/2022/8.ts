@@ -1,5 +1,7 @@
 import _ from 'lodash'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [21, 8]
 
 export const solve: util.Solver = (input) => {
   const data = input.trim().split('\n').map((line) => line.split('').map((i) => parseInt(i, 10)))

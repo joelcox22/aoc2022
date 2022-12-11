@@ -1,4 +1,6 @@
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [2, 4]
 
 export const solve: util.Solver = (input) => {
   const data = input.trim().split('\n').map((pair) => pair.split(',').map((range) => range.split('-').map((v) => parseInt(v, 10)).sort((a, b) => a - b)))

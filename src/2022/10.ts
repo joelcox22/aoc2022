@@ -1,6 +1,8 @@
 import { sum } from 'lodash'
 import { produce } from 'immer'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [13140]
 
 interface State {
   register: number

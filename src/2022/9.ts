@@ -1,6 +1,8 @@
 import { clamp } from 'lodash'
 import { produce, enableMapSet } from 'immer'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [13, 1]
 
 enableMapSet()
 

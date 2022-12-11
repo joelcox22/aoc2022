@@ -1,5 +1,7 @@
 import _ from 'lodash'
-import * as util from './util'
+import * as util from '../util'
+
+export const expect = [157, 70]
 
 function itemPriority (item: string): number {
   const value = item.charCodeAt(0)
