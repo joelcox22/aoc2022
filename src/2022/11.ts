@@ -17,7 +17,7 @@ interface Monkeys { [key: string]: Monkey }
 function parseInput (input: string): Monkeys {
   const monkeys: Monkeys = parse(input.toLowerCase()
     .replace(/starting items/g, 'items')
-    .replace(/monkey (\d+)/gi, 'monkey$1')
+    .replace(/monkey (\d+)/g, 'monkey$1')
     .replace(/ {2}if true/g, 'ifTrue')
     .replace(/ {2}if false/g, 'ifFalse')
     .replace(/divisible by /g, '')

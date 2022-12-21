@@ -19,5 +19,5 @@ if (!fs.existsSync(file)) {
 }
 
 const solver = await import(path.join(import.meta.dir, year, `${day}.ts`))
-console.log(`AOC ${year} Day ${day}`)
+console.log(`AOC ${year} Day ${day} - https://adventofcode.com/${year}/day/${day}`)
 await util.solve(year, day, solver)

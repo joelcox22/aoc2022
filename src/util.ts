@@ -7,7 +7,7 @@ export const sort = {
   descending: (a: number, b: number) => a - b
 }
 
-export type Solver = (input: string) => Array<string | number>
+export type Solver = (input: string, isExample) => Array<string | number>
 
 export interface Solution {
   solve: Solver
@@ -52,7 +52,7 @@ export async function solve (year: string, problem: string, solution: Solution):
       fs.mkdirSync(`inputs/${year}/${input}`, { recursive: true })
       fs.writeFileSync(inputPath, content)
     }
-    let result = solution.solve(content)
+    let result = solution.solve(content, input === 'example')
     if (!Array.isArray(result)) {
       result = [result]
     }
@@ -75,21 +75,22 @@ export async function solve (year: string, problem: string, solution: Solution):
     console.log('Part 2:')
     console.log('  Example:', color(results[0], 1))
     if (!skip) console.log('  Solution:', chalk.bold.yellowBright(results[1][1]))
-  } else {
-    console.log('Part 2 not implemented yet - return an extra number from your solve function.')
   }
   console.log('completed in', (end - start).toFixed(2), 'ms')
   if (results[0].length === 1 && solution.expect?.[0] === results[0][0]) {
     await submit(year, problem, 1, results[1][0])
-  } else if (results[0].length === 2 && solution.expect?.[1] === results[0][1]) {
-    await submit(year, problem, 2, results[1][1])
+  } else if (!skip) {
+    if (results[0].length === 2 && solution.expect?.[1] === results[0][1]) {
+      await submit(year, problem, 2, results[1][1])
+    } else {
+      console.log('Part 2 not implemented yet - return an extra number from your solve function.')
+    }
   }
   const duration = (end - start)
   return duration
 }
 
 export async function submit (year: string, day: string, part: 1 | 2, answer: string | number): Promise<void> {
-  /* wip
   if (getApproval(`Part ${part} solution looks like it might be correct. Do you want to submit it?`)) {
     const res = await fetch(`https://adventofcode.com/${year}/day/${day}/answer`, {
       method: 'POST',
@@ -100,12 +101,11 @@ export async function submit (year: string, day: string, part: 1 | 2, answer: st
       body: `level=${part}&answer=${encodeURIComponent(answer)}`
     })
     const html = await res.text()
-    const response = html.match(/<main>(.*?)<\/main>/s)?.[1]
-    console.log(response)
+    const response = html.match(/<main>(.*?)<\/main>/s)?.[1]! // eslint-disable-line
+    console.log(dehtml(response))
   } else {
     console.log('not submitting answer')
   }
-  */
 }
 
 export interface TimelineData {
@@ -149,10 +149,27 @@ export async function fetchTimeline (): Promise<TimelineData> {
   return data as TimelineData
 }
 
-export function getApproval (message: string): boolean {
-  console.log(message, 'y/n')
+export function getChar (): string {
   const buffer = Buffer.alloc(1)
   fs.readSync(0, buffer, 0, 1, null)
-  const input = buffer.toString('utf-8')
-  return input === 'y'
+  return buffer.toString('utf-8')
+}
+
+export function getApproval (message: string): boolean {
+  console.log(message, 'y/n')
+  return getChar() === 'y'
+}
+
+export function dehtml (html: string): string {
+  const text = html.replace(/<[^>]*>/g, '')
+  return text
+}
+
+export const prompt = (question: string): string => {
+  fs.writeFileSync('/dev/stdout', question)
+  let input: string = ''
+  do {
+    input += getChar()
+  } while (!input.includes('\n'))
+  return input.trim()
 }

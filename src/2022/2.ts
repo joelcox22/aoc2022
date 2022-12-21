@@ -45,14 +45,11 @@ export const solve: util.Solver = (input) => {
   const data = input.trim().split('\n').map(line => line.split(' ').map(x => transform[x as Input])) as Option[][]
 
   const winners = data.map(whoWins)
-  console.log(winners)
   const scores = winners.map(calculateScore)
 
   const plan = data.map(([p1, p2]) => [p1, choose(p1, p2)])
   const winners2 = plan.map(whoWins)
   const scores2 = winners2.map(calculateScore)
-
-  console.log(scores)
 
   return [_.sum(scores), _.sum(scores2)]
 }

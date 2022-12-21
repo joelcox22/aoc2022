@@ -12,7 +12,8 @@ export const solve: util.Solver = (input) => {
     return matching >= min && matching <= max
   })
   const part2 = lines.filter(({ min: a, max: b, char, password }) => {
-    return [password[a] === char, password[b] === char].filter(Boolean).length === 1
+    console.log(password, a - 1, password[a - 1], b - 1, password[b - 1], char, password[a - 1] === char, password[b - 1] === char)
+    return [password[a - 1] === char, password[b - 1] === char].filter(Boolean).length === 1
   })
   return [part1.length, part2.length]
 }
